@@ -3,25 +3,29 @@ import { expect } from 'chai';
 import { detectSums } from './utils';
 
 describe('Detect sums', () => {
-  it('should fail if input is not an array', () => {
-    expect(() => detectSums()).to.throw('Input is not an array');
+
+  it('should return indication message that the input includes not a number', () => {
+    expect(detectSums('1a2')).to.be.a('string').that.equals('Input includes not a number');
   });
 
-  it('should return an array', () => {
-    const result = detectSums([]);
-    expect(result).to.be.instanceof(Array);
+  it('should return no sums found message', () => {
+    expect(detectSums('12')).to.be.a('string').that.equals('No sums found');
+    expect(detectSums('302')).to.be.a('string').that.equals('No sums found');
   });
 
-  it('should detect sums', () => {
-    const result = detectSums([1, 2]);
-    expect(result).to.be.instanceof(Array);
-    expect(result).to.have.lengthOf(0);
+  it('should return correct sums', () => {
+    var result = detectSums('12345');
+    expect(result).to.be.a('array');
+    expect(result[0]).to.eql({pA:0,pB:1,sum:2});
+    expect(result[1]).to.eql({pA:0,pB:2,sum:3});
+    expect(result[2]).to.eql({pA:1,pB:2,sum:4});
+    expect(result[3]).to.eql({pA:0,pB:3,sum:4});
   });
-
-  it('should detect sums in order', () => {
-    const result = detectSums([1, 2, 3]);
-    expect(result).to.be.instanceof(Array);
-    expect(result).to.have.lengthOf(1);
-    expect(result).to.deep.include({ pA: 0, pB: 1, sum: 2});
+  
+  it('should handle dublicate numbers correctly', () => {
+    var result = detectSums('22334');
+    expect(result).to.be.a('array');
+    expect(result[0]).to.eql({pA:0,pB:1,sum:4});
   });
+  
 });

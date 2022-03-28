@@ -9,7 +9,8 @@ class App extends Component {
       value: '',
       userInput: '',
       result: '',
-      error: 'Write something',
+      error: '',
+      time: 0,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -22,18 +23,28 @@ class App extends Component {
 
   handleSubmit(event) {
     const { value } = this.state;
-    const { input, result, error } = calculateResult(value);
-    this.setState({ userInput: input, result, error });
+    var startTime = performance.now();
+    const { input, result, error,} = calculateResult(value);
+    var endTime = performance.now();
+    this.setState({ userInput: input, result, error, time: endTime - startTime });
     event.preventDefault();
   }
 
   render() {
-    const { userInput, result, error } = this.state;
+    const { userInput, result, error, time} = this.state;
     return (
       <div className="App">
         <form className="App-form" onSubmit={this.handleSubmit}>
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-          { !error &&
+          <p>
+            <span>Please enter single digit numbers.</span>
+          </p>
+          <div>
+            <div className='InputDiv'>
+              <input className='Input' type="text" value={this.state.value} onChange={this.handleChange} /> 
+              <p className='TimeText'>Time Elapsed: {time}s</p>
+            </div>
+          </div>
+          { userInput &&
             <p>
               <span>Result for input '{userInput}' is '{result}'</span>
             </p>
