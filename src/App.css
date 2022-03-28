@@ -24,6 +24,21 @@
   color: #61dafb;
 }
 
+.InputDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Input {
+  height: 15px;
+  margin-right: 15px;
+}
+
+.TimeText {
+  font-size: 17px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

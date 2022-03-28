@@ -1,20 +1,20 @@
 const pairSum = require('find-pair-sum');
 
+// detecting sums with a 3rd party library
 export const detectSums = (input) => {
-
   var sums = [];
-  // var pA = 0;
-  // var sumIndex = 0;
   var parsedInput = [];
+  var nanCheck = false;
   
   if (typeof input !== 'object' && input !== null){parsedInput = [...input]}; // convert string of numbers into seperate elements
-  if (parsedInput.length === 0){return "Input is empty"};
-  parsedInput.forEach((el) => {if (isNaN(el) === true) {return "Input includes not a number"}});
+  if (parsedInput.length === 0){ return "Input is empty" }; // check if user input is empty
+  parsedInput.forEach((el) => { if (isNaN(el) === true) { nanCheck = true } }); // check for any non numbers in the user input 
+  if (nanCheck) { return 'Input includes not a number' }; // return message if there is a non number in the user input
 
   try {
     for (var i = 0; i < parsedInput.length; i++){
       var idxs = [];
-      for (var a = parsedInput.length -1; a >= 0; a--){ // check and store any duplicate number indexs for later use
+      for (var a = parsedInput.length -1; a >= 0; a--){ // check and store any duplicate number indexs in the user input for later use
         if (parsedInput[a] === parsedInput[i]){
           idxs.unshift(a);
         }
@@ -43,45 +43,60 @@ export const detectSums = (input) => {
   } catch (error) {
     console.log(error);
   }
-  // try {
-    // for (var i = 0; i < parsedInput.length; i++){
-    //   var idxs = [];
-    //   for (var a = parsedInput.length -1; a >= 0; a--){ // check and store any duplicate number indexs for later use
-    //     if (parsedInput[a] === parsedInput[i]){
-    //       idxs.unshift(a);
-    //     }
-    //   }
-
-    //   pA = parseInt(parsedInput[i]); // store first number for the sum
-    //   parsedInput.forEach((el) => {
-    //     var sum = pA + parseInt(el); // calculate a sum 
-    //     sumIndex = parsedInput.indexOf(sum.toString()); // check if the calculated sum is in the original array
-    //     if (sumIndex !== -1 && parsedInput.indexOf(el, i) !== i && parsedInput.indexOf(el, i) !== -1){  // check if sum exists, check if 2nd index is not a duplicate and check if 2nd index exists  
-    //       if (sums.findIndex(obj => obj.pA === i && obj.pB === parsedInput.indexOf(el, i) && obj.sum === sumIndex) === -1){ // check for duplicate objects 
-    //         if (sumIndex === i || sumIndex === parsedInput.indexOf(el, i)){ // check for duplicate indexs 
-    //           var newIndex = idxs.findIndex((obj => obj !== sumIndex)); // if there is a duplcate index, use another index from the stored indexs array 
-    //           sums.push({'pA': i, 'pB': parsedInput.indexOf(el, i), 'sum': idxs[newIndex]}); // insert sum object with non-duplicate index 
-    //         } else {
-    //           sums.push({'pA': i, 'pB': parsedInput.indexOf(el, i), 'sum': sumIndex}); // insert sum object
-    //         }
-    //       }
-    //     }
-    //   })
-    // }
-  // } catch (error) {
-  //   console.log(error);
-  // }
-  return sums;
+  
+  return ((sums.length > 0)? sums : 'No sums found'); // return either calculated sums or no sums found message
 };
 
+
+// Below is how far i got with manually detecting and calculating sums without the use of a 3rd party library, it is not finished
+export const manualDetectSums = (input) => {
+  var sums = [];
+  var parsedInput = [];
+  var nanCheck = false;
+
+  if (typeof input !== 'object' && input !== null){parsedInput = [...input]}; // convert string of numbers into seperate elements
+  if (parsedInput.length === 0){ return "Input is empty" }; // check if user input is empty
+  parsedInput.forEach((el) => { if (isNaN(el) === true) { nanCheck = true } }); // check for any non numbers in the user input 
+  if (nanCheck) { return 'Input includes not a number' }; // return message if there is a non number in the user input
+
+  try {
+    for (var i = 0; i < parsedInput.length; i++){
+      var idxs = [];
+      for (var a = parsedInput.length -1; a >= 0; a--){ // check and store any duplicate number indexs for later use
+        if (parsedInput[a] === parsedInput[i]){
+          idxs.unshift(a);
+        }
+      }
+
+      parsedInput.forEach((el) => {
+        var sum = parseInt(parsedInput[i]) + parseInt(el); // calculate a sum 
+        var sumIndex = parsedInput.indexOf(sum.toString()); // check if the calculated sum is in the original array
+        if (sumIndex !== -1 && parsedInput.indexOf(el, i) !== i && parsedInput.indexOf(el, i) !== -1){  // check if sum exists, check if 2nd index is not a duplicate and check if 2nd index exists  
+          if (sums.findIndex(obj => obj.pA === i && obj.pB === parsedInput.indexOf(el, i) && obj.sum === sumIndex) === -1){ // check for duplicate objects 
+            if (sumIndex === i || sumIndex === parsedInput.indexOf(el, i)){ // check for duplicate indexs 
+              var newIndex = idxs.findIndex((obj => obj !== sumIndex)); // if there is a duplcate index, use another index from the stored indexs array 
+              sums.push({'pA': i, 'pB': parsedInput.indexOf(el, i), 'sum': idxs[newIndex]}); // insert sum object with non-duplicate index 
+            } else {
+              sums.push({'pA': i, 'pB': parsedInput.indexOf(el, i), 'sum': sumIndex}); // insert sum object
+            }
+          }
+        }
+      })
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return ((sums.length > 0)? sums : 'No sums found');
+}
+
 export function calculateResult(input) {
-  const parsedInput = input.split(',').map(i => parseInt(i.trim(), 10));
   let error = null;
   let result = '';
   try {
-    result = JSON.stringify(detectSums(input));
+    result = JSON.stringify(detectSums(input)); // convert result to a readable state for react 
   } catch (e) {
     error = e.message;
   }
-  return { input: parsedInput, result, error }
+  return { input: input, result, error } // return results to react app
 }
